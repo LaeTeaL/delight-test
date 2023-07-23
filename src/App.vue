@@ -5,7 +5,8 @@
 
     <div class="dropdown">
       <label class="green">Choisissez un pays</label>
-      <select v-model="countryCode">
+      <LoaderCustom v-if="loading" />
+      <select v-else v-model="countryCode">
         <option v-for="(country, index) in countries" :key="index" :value="country.code">
           {{ country.name }}
         </option>
@@ -21,13 +22,15 @@
 <script>
 import gql from 'graphql-tag'
 import CountryItem from '@/components/CountryItem.vue'
+import LoaderCustom from '@/components/LoaderCustom.vue';
 
 export default {
-  components: { CountryItem },
+  components: {LoaderCustom, CountryItem },
   data() {
     return {
       countries: [],
-      countryCode: ''
+      countryCode: '',
+      loading: 0
     }
   },
   apollo: {
@@ -67,13 +70,15 @@ header {
 }
 
 label {
+  display: block;
+  margin-bottom: 0.8rem;
   font-size: 1.5em;
 }
 
 select {
   width: 100%;
-  margin-top: 0.8rem;
   padding: 5px;
+  color: var(--color-text);
   border: 1px solid var(--color-border);
   border-radius: 3px;
   background-color: var(--color-background);

@@ -12,6 +12,9 @@ const apolloClient = new ApolloClient({
 
 const apolloProvider = createApolloProvider({
   defaultClient: apolloClient,
+  defaultOptions: {
+    $loadingKey: 'loading'
+  }
 })
 
 const app = createApp({
