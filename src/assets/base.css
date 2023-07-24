@@ -45,7 +45,7 @@
   --color-error-light: var(--vt-c-red-light);
 
   --section-gap: 160px;
-  --card-width: 320px;
+  --card-width: 380px;
 }
 
 @media (prefers-color-scheme: dark) {

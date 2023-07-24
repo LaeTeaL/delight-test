@@ -23,19 +23,23 @@
     </div>
   </header>
 
-  <main v-if="countryCode" class="wrapper">
+  <main class="wrapper">
     <CountryItem :code="countryCode" />
   </main>
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import CountryItem from '@/components/CountryItem.vue'
 import LoaderCustom from '@/components/LoaderCustom.vue'
 import ErrorBlock from '@/components/ErrorBlock.vue'
+import CountryItem from '@/components/CountryItem.vue'
 
 export default {
-  components: { ErrorBlock, LoaderCustom, CountryItem },
+  components: {
+    LoaderCustom,
+    ErrorBlock,
+    CountryItem
+  },
   data() {
     return {
       countries: [],
@@ -77,7 +81,7 @@ header {
 .wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .icon {

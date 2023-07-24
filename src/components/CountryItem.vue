@@ -71,8 +71,8 @@ import ErrorBlock from '@/components/ErrorBlock.vue'
 
 export default {
   components: {
-    ErrorBlock,
-    LoaderCustom
+    LoaderCustom,
+    ErrorBlock
   },
   props: ['code'],
   data() {
@@ -126,6 +126,7 @@ export default {
 <style scoped>
 .card {
   max-width: var(--card-width);
+  margin: 0 auto;
   padding: 1rem;
   border: 1px solid var(--color-border-hover);
   border-radius: 12px;
