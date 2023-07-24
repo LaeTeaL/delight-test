@@ -1,20 +1,29 @@
 <template>
   <header class="wrapper">
     <h1 class="hidden">Delight test technique</h1>
-    <img class="icon" alt="" src="./assets/earth.png" width="125" height="125" />
+    <img alt="" class="icon" src="./assets/earth.png" />
 
-    <div class="dropdown">
-      <label class="green">Choisissez un pays</label>
-      <LoaderCustom v-if="loading" />
-      <select v-else v-model="countryCode">
-        <option v-for="(country, index) in countries" :key="index" :value="country.code">
-          {{ country.name }}
-        </option>
-      </select>
+    <LoaderCustom v-if="loading" />
+
+    <div v-else class="dropdown">
+      <ErrorBlock v-if="errors.length" :errors="errors" />
+
+      <div v-else>
+        <label class="green">Choisissez un pays</label>
+        <select v-model="countryCode">
+          <option
+            v-for="(country, index) in countries"
+            :key="index"
+            :value="country.code"
+          >
+            {{ country.name }}
+          </option>
+        </select>
+      </div>
     </div>
   </header>
 
-  <main class="wrapper" v-if="countryCode">
+  <main v-if="countryCode" class="wrapper">
     <CountryItem :code="countryCode" />
   </main>
 </template>
@@ -22,26 +31,33 @@
 <script>
 import gql from 'graphql-tag'
 import CountryItem from '@/components/CountryItem.vue'
-import LoaderCustom from '@/components/LoaderCustom.vue';
+import LoaderCustom from '@/components/LoaderCustom.vue'
+import ErrorBlock from '@/components/ErrorBlock.vue'
 
 export default {
-  components: {LoaderCustom, CountryItem },
+  components: { ErrorBlock, LoaderCustom, CountryItem },
   data() {
     return {
       countries: [],
       countryCode: '',
-      loading: 0
+      loading: 0,
+      errors: []
     }
   },
   apollo: {
-    countries: gql`
-      query GetAllCountries {
-        countries {
-          code
-          name(lang: "fr")
+    countries: {
+      query: gql`
+        query GetAllCountries {
+          countries {
+            code
+            name(lang: "fr")
+          }
         }
+      `,
+      error(error) {
+        this.errors = error.graphQLErrors
       }
-    `
+    }
   }
 }
 </script>
@@ -64,6 +80,11 @@ header {
   justify-content: flex-end;
 }
 
+.icon {
+  max-width: 125px;
+  height: auto;
+}
+
 .dropdown {
   max-width: 13rem;
   text-align: center;
@@ -82,8 +103,9 @@ select {
   border: 1px solid var(--color-border);
   border-radius: 3px;
   background-color: var(--color-background);
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
 
   &:hover {
     cursor: pointer;

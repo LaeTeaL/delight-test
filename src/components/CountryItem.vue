@@ -2,46 +2,61 @@
   <div>
     <LoaderCustom v-if="loading" />
 
-    <div v-else :class="{ country: code }">
-      <h2 class="green">
+    <ErrorBlock v-if="errors.length" :errors="errors" />
+
+    <div v-else-if="country" :class="{ card: code }">
+      <h2 class="title green">
         {{ country.name }} <span>{{ country.emoji }}</span>
       </h2>
 
-      <ul>
+      <ul class="list">
         <li class="group">
           <span class="label">Capitale : </span>
-          <span v-if="country.capital" class="green">{{ country.capital }}</span>
+          <span v-if="country.capital" class="green">{{
+            country.capital
+          }}</span>
           <span v-else class="none">Aucune</span>
         </li>
+
         <li class="group">
           <span class="label">Monnaie(s) : </span>
-          <ul v-if="country.currencies && country.currencies[0] !== ''" class="list">
+          <ul v-if="country.currencies[0] !== ''" class="list">
             <li
-              class="list-item"
               v-for="(currency, index) in country.currencies"
               :key="index"
+              class="item"
               v-html="getCurrency(currency)"
             ></li>
           </ul>
           <span v-else class="none">Aucune</span>
         </li>
+
         <li class="group">
           <span class="label">Langue(s) : </span>
           <ul v-if="country.languages.length" class="list">
-            <li  class="list-item" v-for="(lang, index) in country.languages" :key="index">
+            <li
+              v-for="(lang, index) in country.languages"
+              :key="index"
+              class="item"
+            >
               {{ lang.name }}
             </li>
           </ul>
           <span v-else class="none">Aucune</span>
         </li>
+
         <li>
           <span class="label">Préfixe(s) téléphonique(s) : </span>
           <ul v-if="country.phones.length" class="list">
-            <li class="list-item" v-for="(phone, index) in country.phones" :key="index">
+            <li
+              v-for="(phone, index) in country.phones"
+              :key="index"
+              class="item"
+            >
               {{ phone }}
             </li>
           </ul>
-          <span v-else class="none">Aucun</span>
+          <span v-else class="none"> Aucun</span>
         </li>
       </ul>
     </div>
@@ -51,45 +66,54 @@
 <script>
 import gql from 'graphql-tag'
 import data from '@/data/currency.json'
-import LoaderCustom from '@/components/LoaderCustom.vue';
+import LoaderCustom from '@/components/LoaderCustom.vue'
+import ErrorBlock from '@/components/ErrorBlock.vue'
 
 export default {
   components: {
+    ErrorBlock,
     LoaderCustom
   },
   props: ['code'],
   data() {
     return {
       country: '',
-      loading: 0
+      loading: 0,
+      errors: []
     }
   },
   apollo: {
     country: {
       query: gql`
-      query getCountry($code: ID!) {
-        country(code: $code) {
-          name(lang: "fr")
-          capital
-          emoji
-          currencies
-          languages {
-            name
+        query getCountry($code: ID!) {
+          country(code: $code) {
+            name(lang: "fr")
+            capital
+            emoji
+            currencies
+            languages {
+              name
+            }
+            phones
           }
-          phones
         }
-      }`,
+      `,
       variables() {
         return {
           code: this.code
         }
+      },
+      error(error) {
+        this.errors = error.graphQLErrors
       }
     }
   },
   methods: {
     getCurrency(currency) {
       if (data[currency]) {
-        const symbol = (data[currency].symbol) ? ' - <span class="green">' + data[currency].symbol + '</span>' : ''
+        const symbol = data[currency].symbol
+          ? ' - <span class="green">' + data[currency].symbol + '</span>'
+          : ''
         return data[currency].name + symbol
       } else {
         return currency
@@ -100,21 +124,16 @@ export default {
 </script>
 
 <style scoped>
-.country {
+.card {
+  max-width: var(--card-width);
   padding: 1rem;
   border: 1px solid var(--color-border-hover);
   border-radius: 12px;
 }
 
-h2 {
+.title {
   display: flex;
   justify-content: space-between;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
 }
 
 .group {
@@ -125,7 +144,7 @@ ul {
   }
 }
 
-.list-item {
+.item {
   margin-left: 0.3rem;
 
   &::before {
