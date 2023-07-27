@@ -60,12 +60,16 @@
         </li>
       </ul>
     </div>
+
+    <div v-else-if="code && !country">
+      <p class="none">Aucun résultat ne correspond au pays sélectionné</p>
+    </div>
   </div>
 </template>
 
 <script>
 import gql from 'graphql-tag'
-import data from '@/data/currency.json'
+import dataCurrencies from '@/data/currency.json'
 import LoaderCustom from '@/components/LoaderCustom.vue'
 import ErrorBlock from '@/components/ErrorBlock.vue'
 
@@ -110,11 +114,13 @@ export default {
   },
   methods: {
     getCurrency(currency) {
-      if (data[currency]) {
-        const symbol = data[currency].symbol
-          ? ' - <span class="green">' + data[currency].symbol + '</span>'
+      if (dataCurrencies[currency]) {
+        const symbol = dataCurrencies[currency].symbol
+          ? ' - <span class="green">' +
+            dataCurrencies[currency].symbol +
+            '</span>'
           : ''
-        return data[currency].name + symbol
+        return dataCurrencies[currency].name + symbol
       } else {
         return currency
       }

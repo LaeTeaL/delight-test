@@ -25,6 +25,7 @@
 
   <main class="wrapper">
     <CountryItem :code="countryCode" />
+    <MapContainer v-if="countryCode" :code="countryCode" />
   </main>
 </template>
 
@@ -33,12 +34,14 @@ import gql from 'graphql-tag'
 import LoaderCustom from '@/components/LoaderCustom.vue'
 import ErrorBlock from '@/components/ErrorBlock.vue'
 import CountryItem from '@/components/CountryItem.vue'
+import MapContainer from '@/components/MapContainer.vue'
 
 export default {
   components: {
     LoaderCustom,
     ErrorBlock,
-    CountryItem
+    CountryItem,
+    MapContainer
   },
   data() {
     return {
@@ -59,7 +62,7 @@ export default {
         }
       `,
       error(error) {
-        this.errors = error.graphQLErrors
+        this.errors = error.graphQLErrors || error.networkError
       }
     }
   }
